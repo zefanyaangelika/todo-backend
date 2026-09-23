@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 
 export const TodoModel = {
-  getByUserId: async (userId: number) => {
+  getByUserId: async (userId: number, limit: number,offset: number) => {
     const [rows]: any = await pool.query(
       "SELECT * FROM todos WHERE user_id = ?",
       [userId]
@@ -17,6 +17,15 @@ export const TodoModel = {
 
     return rows[0];
   },
+
+ countByUserId: async (userId: number) => {
+  const [rows]: any = await pool.query(
+    "SELECT COUNT(*) as total FROM todos WHERE user_id = ?",
+    [userId]
+  );
+
+  return rows[0].total;
+},
 
   create: async (userId: number, task: string) => {
     const [result]: any = await pool.query(
