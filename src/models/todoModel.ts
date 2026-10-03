@@ -35,11 +35,36 @@ export const TodoModel = {
     return result.insertId;
   },
 
-  // Update task atau status is_completed
-  update: async ( id: number, task: string,isCompleted: boolean, userId: number) => {
-    const [result]: any = await pool.query(
-     'UPDATE todos SET task = ?, is_completed = ? WHERE id = ? AND user_id = ?',
-    [task, isCompleted, id, userId]
+  // Update task atau status is_completed secara dinamis
+update: async (
+  id: number,
+  task: string | undefined,
+  isCompleted: boolean | undefined,
+  userId: number
+) => {
+  const fields: string[] = [];
+  const values: any[] = [];
+
+  if (task !== undefined) {
+    fields.push("task = ?");
+    values.push(task);
+  }
+
+  if (isCompleted !== undefined) {
+    fields.push("is_completed = ?");
+    values.push(isCompleted);
+  }
+
+  if (fields.length === 0) {
+    return 0;
+  }
+
+  values.push(id, userId);
+
+  const [result]: any = await pool.query(
+    `UPDATE todos SET ${fields.join(", ")}
+     WHERE id = ? AND user_id = ?`,
+    values
   );
 
   return result.affectedRows;

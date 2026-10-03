@@ -15,7 +15,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     await UserModel.create(payload.username, payload.email, hashedPassword);
     sendSuccess(res, 'Registrasi berhasil!');
   } catch (error: any) {
-    console.error('REGISTER ERROR:', error);
+    
     if (error.code === 'ER_DUP_ENTRY') {
       sendError(res, 'Username atau Email sudah terdaftar!', 409);
       return;
